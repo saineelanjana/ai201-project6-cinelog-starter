@@ -19,7 +19,9 @@
 
 ## Comment 3 — Missing test
 **What I did:**
+- Added a unit test to add a nonexistent film to a user's watchlist and verify that it raises a `FilmNotFoundError`.
 **How I verified:**
+- Ran the test suite and confirmed that the new test passes and correctly raises the expected error.
 
 ## Comment 4 — Default visibility
 **My position:**
