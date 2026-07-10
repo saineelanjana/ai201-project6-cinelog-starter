@@ -12,7 +12,10 @@
 
 ## Comment 2 — Deduplication
 **What I did:**
+- Implemented a check in the `add_to_watchlist` function to prevent adding duplicate films to a user's watchlist and raise an error.
 **How I verified:**
+- Wrote unit tests to ensure the function raises `AlreadyInWatchlistError` when attempting to add a duplicate film.
+- Manually tested the function with both duplicate and unique film IDs.
 
 ## Comment 3 — Missing test
 **What I did:**
