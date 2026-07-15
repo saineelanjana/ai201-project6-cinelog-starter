@@ -34,9 +34,12 @@
 
 ## Comment 5 — Sort order
 **My position:**
+- Changed `get_watchlist` to order by `date_added` descending (most recently added first) instead of `Film.title` ascending (alphabetical).
 **Reasoning:**
-
+- A watchlist is a queue of things to get to, not a reference list you look something up in — the dominant use case is "what did I just add / what's new," not "find title X." Recency ordering matches that mental model better than alphabetical.
 **Engagement with reviewer's point:**
+- Alphabetical does have a real advantage: it's stable and easy to scan when you're hunting for a specific title in a long list. That's a better fit for something like the collection (already-watched films), where users are more likely to browse or look something up.
+- For the watchlist specifically, I think recency wins for most users, so I made the change rather than leaving it alphabetical. Open to revisiting if usage shows otherwise, but wanted to make a call rather than leave it unresolved.
 
 ## Comment 6 — Rebase
 **What conflicted:**
