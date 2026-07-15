@@ -43,8 +43,16 @@
 
 ## Comment 6 — Rebase
 **What conflicted:**
+- `.gitignore` and `pr-response.md` had trivial add/add and content conflicts (duplicate `.venv`/`venv` entries, a stray blank line) — resolved by keeping both sides' real content and dropping the noise.
+- The bigger issue wasn't a textual conflict at all: main's `refactor: migrate film IDs from integer to UUID` commit deleted the `WatchlistEntry` model entirely (it only existed pre-refactor), and no commit on this branch ever re-added it. Since git saw no overlapping lines to flag, the rebase completed "cleanly" but silently dropped `WatchlistEntry` from `models.py`.
+- `services/watchlist_service.py` still had a docstring claiming `film_id` was an `int` ("pre-refactor"), and `tests/test_watchlist.py` used a bare integer (`99999`) as a fake film ID.
 **How I resolved it:**
+- Re-added `WatchlistEntry` to `models.py` with `film_id` typed as `db.String(36)` (matching the new `Film.id` and `CollectionEntry.film_id`), keeping the `public` default and `to_dict` shape unchanged.
+- Updated the `add_to_watchlist` docstring to say `film_id (str): UUID of the film.` `db.session.get(Film, film_id)` in `add_to_watchlist` already worked with either ID type, so no logic change was needed there.
+- Updated the nonexistent-film test to use a fake UUID string instead of an integer, so it stays meaningful post-refactor.
 **How I verified no conflict remains:**
+- Ran `grep` for `WatchlistEntry` across `models.py` before and after the fix to confirm it was actually missing, then present.
+- Ran the full test suite (`pytest`) after rebasing: all 6 tests pass, including the deduplication and nonexistent-film tests against the UUID schema.
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
