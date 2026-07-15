@@ -25,8 +25,12 @@
 
 ## Comment 4 — Default visibility
 **My position:**
+- Keeping `public` defaulted to `True` on `WatchlistEntry`.
 **Reasoning:**
+- A watchlist is inherently a social/sharing feature — the value of "what I want to watch" comes from friends being able to see it and get recommendations. Defaulting to public matches that intent without requiring extra setup from every user.
+- Opt-out (public by default, toggle to private) keeps the common case frictionless, since most users adding a film to their watchlist have no reason to hide it.
 **Tradeoff acknowledged:**
+- This is an opt-out privacy model, which is more permissive than opt-in. A user could add a film before realizing their watchlist is visible by default, which is a legitimate privacy concern for anyone with sensitive/personal viewing interests. If we wanted to be more conservative, defaulting to `False` would protect users first and require explicit action to share, at the cost of reduced social engagement out of the box.
 
 ## Comment 5 — Sort order
 **My position:**
