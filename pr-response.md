@@ -2,6 +2,11 @@
 
 ## AI Usage
 <!-- Fill in at the end — how you used AI tools during this project -->
+Used Claude Code throughout this PR cycle, mainly for:
+- Drafting written responses to reviewer comments (Comments 1–6 above) — I gave the decision or fix I'd already made/wanted, and had it turn that into clear position/reasoning/tradeoff writeups.
+- Debugging the rebase onto `main`: after `git rebase main`, it caught that the UUID-migration refactor had silently deleted the `WatchlistEntry` model entirely (no textual conflict, so git didn't flag it) and helped re-add it with UUID-typed `film_id`, plus fixed a stale docstring and an outdated integer test fixture.
+- Cleaning up commit history: squashed the first five commits into one (`git merge --squash` + `git rebase --onto`, since interactive rebase isn't usable here) to get down to 6 commits, verifying tests still passed after.
+- Drafting this PR description from the actual code/tests in the branch.
 
 ## Comment 1 — Rename
 **What I did:**
@@ -56,3 +61,23 @@
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
+
+### Overview
+Adds a watchlist feature: users can save films they want to watch later, view their list, and are protected from adding duplicates or nonexistent films.
+
+- `WatchlistEntry` model (`models.py`) — tracks `user_id`, `film_id`, `date_added`, and `public`.
+- `add_to_watchlist(user_id, film_id)` (`services/watchlist_service.py`) — adds a film, raising `FilmNotFoundError` for an unknown film and `AlreadyInWatchlistError` for a duplicate.
+- `get_watchlist(user_id)` (`services/watchlist_service.py`) — returns a user's watchlist as a list of film dicts with watchlist metadata attached.
+- `POST /watchlist/<user_id>/add` and `GET /watchlist/<user_id>` (`routes/watchlist/watchlist.py`) — endpoints exposing the above.
+
+### Design decisions
+1. **Visibility defaults to public** — `WatchlistEntry.public` defaults to `True`. A watchlist's value comes from being shareable/discoverable (friends can see what you plan to watch), so the common case is opt-out rather than opt-in. See Comment 4 above for the full reasoning and the privacy tradeoff this implies.
+2. **Sort order is most-recently-added first** — `get_watchlist` orders by `date_added` descending rather than alphabetically by title. A watchlist is a queue of what to get to next, not a reference list to search through, so recency is the more useful default. See Comment 5 above for the full discussion, including where alphabetical would still make sense (the collection view).
+
+### Manual testing
+1. Install dependencies and activate the environment: `pip install -r requirements.txt` (or use the existing `.venv`).
+2. Run the full test suite: `pytest`
+   - Confirms adding a film to the watchlist succeeds and is retrievable.
+   - Confirms adding a duplicate film raises `AlreadyInWatchlistError` and does not create a second row.
+   - Confirms adding a nonexistent `film_id` raises `FilmNotFoundError`.
+3. All 6 tests should pass, covering the watchlist add/dedupe/not-found flow end to end against the current UUID-based schema.
