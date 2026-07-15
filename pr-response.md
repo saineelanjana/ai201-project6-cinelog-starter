@@ -81,3 +81,6 @@ Adds a watchlist feature: users can save films they want to watch later, view th
    - Confirms adding a duplicate film raises `AlreadyInWatchlistError` and does not create a second row.
    - Confirms adding a nonexistent `film_id` raises `FilmNotFoundError`.
 3. All 6 tests should pass, covering the watchlist add/dedupe/not-found flow end to end against the current UUID-based schema.
+
+### Screenshot of git log
+<img width="944" height="136" alt="Screenshot 2026-07-14 at 8 04 09 PM" src="https://github.com/user-attachments/assets/b41df6a3-a67f-4a75-ae7b-8041110f290c" />
